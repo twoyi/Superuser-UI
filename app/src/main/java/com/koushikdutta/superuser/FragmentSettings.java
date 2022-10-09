@@ -69,7 +69,7 @@ public class FragmentSettings extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
 
-                getActivity().getPackageManager().setComponentEnabledSetting(new ComponentName("me.phh.superuser", ActivitySplash.class.getName()),
+                getActivity().getPackageManager().setComponentEnabledSetting(new ComponentName("me.phh.superuser", MainActivity.class.getName()),
                         (boolean) newValue ? PackageManager.COMPONENT_ENABLED_STATE_DISABLED : PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                         PackageManager.DONT_KILL_APP);
                 return true;
