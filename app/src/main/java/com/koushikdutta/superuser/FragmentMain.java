@@ -25,11 +25,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,32 +39,24 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.koushikdutta.superuser.db.SuDatabaseHelper;
 import com.koushikdutta.superuser.db.UidPolicy;
 import com.koushikdutta.superuser.helper.Settings;
-import com.koushikdutta.superuser.helper.recycler.GridDividerItemDecoration;
-import com.koushikdutta.superuser.helper.recycler.GridTopOffsetItemDecoration;
 import com.koushikdutta.superuser.helper.recycler.StartOffsetItemDecoration;
-import com.koushikdutta.superuser.util.ATHUtil;
 import com.koushikdutta.superuser.util.Util;
 import com.koushikdutta.superuser.view.PinView;
 import com.koushikdutta.superuser.view.RecyclerViewSwipeable;
@@ -165,7 +152,6 @@ public class FragmentMain extends Fragment {
 
 
     static boolean SHOULD_RELOAD = false;
-    private boolean gridMode;
 
     private int type = FRAGMENT_ALLOWED;
 
@@ -233,10 +219,8 @@ public class FragmentMain extends Fragment {
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, new IntentFilter(Common.INTENT_FILTER_MAIN));
 
 
-        gridMode = pref.getBoolean("grid_mode", true);
 
-
-        coordinatorLayout = (CoordinatorLayout) getActivity().findViewById(R.id.main_content);
+        coordinatorLayout = getActivity().findViewById(R.id.main_content);
 
         //tabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
 
@@ -244,34 +228,8 @@ public class FragmentMain extends Fragment {
 
         int span = 0;
 
-        if (gridMode) {
-            layoutManager = new RecyclerViewSwipeable.LayoutManagerSwipeable(context, 1);
-
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                span = pref.getInt("grid_size_port", 3);
-                layoutManager.setSpanCount(span);
-
-            } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                span = pref.getInt("grid_size_land", 4);
-                layoutManager.setSpanCount(span);
-            }
-
-            Drawable divider = ContextCompat.getDrawable(context, R.drawable.divider_grid);
-            divider.setColorFilter(new PorterDuffColorFilter(ATHUtil.resolveColor(context, R.attr.dividerGrid), PorterDuff.Mode.SRC_ATOP));
-
-            recycler.setLayoutManager(layoutManager);
-
-            recycler.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(context, R.anim.grid_layout_animation));
-
-            recycler.addItemDecoration(new GridDividerItemDecoration(divider, divider, span));
-
-            recycler.addItemDecoration(new GridTopOffsetItemDecoration(Util.toPx(context, 5), span));
-
-        } else {
-            recycler.setLayoutManager(new LinearLayoutManager(context));
-
-            recycler.addItemDecoration(new StartOffsetItemDecoration(Util.toPx(context, 10)));
-        }
+        recycler.setLayoutManager(new LinearLayoutManager(context));
+        recycler.addItemDecoration(new StartOffsetItemDecoration(Util.toPx(context, 10)));
 
         //recycler.setListener(clickListener);
         //recycler.setViewPager(viewPager);
@@ -323,68 +281,6 @@ public class FragmentMain extends Fragment {
             startActivity(new Intent(getActivity(), ActivitySettings.class));
             return true;
         });
-        MenuItem mode = menu.add(Menu.NONE, Menu.NONE, 100, R.string.list_mode);
-        mode.setTitle(pref.getBoolean("grid_mode", true) ? R.string.list_mode : R.string.grid_mode);
-        mode.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-
-        mode.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-
-                if (pref.edit().putBoolean("grid_mode", !pref.getBoolean("grid_mode", true)).commit())
-                    getActivity().recreate();
-                return true;
-            }
-        });
-
-        if (!gridMode) return;
-
-        MenuItem gridSize = menu.add(Menu.NONE, Menu.NONE, 101, R.string.grid_size);
-        gridSize.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-
-        gridSize.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-
-                int sizePort = pref.getInt("grid_size_port", 3);
-                int sizeLand = pref.getInt("grid_size_land", 4);
-
-                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-                View parent = LayoutInflater.from(context).inflate(R.layout.dialog_settings_grid_size, null);
-
-                final AppCompatSeekBar seekPort = (AppCompatSeekBar) parent.findViewById(R.id.seek_port);
-                seekPort.setProgress(sizePort - 3);
-
-                final AppCompatSeekBar seekLand = (AppCompatSeekBar) parent.findViewById(R.id.seek_land);
-                seekLand.setProgress(sizeLand - 3);
-
-                builder.setView(parent);
-                builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        SharedPreferences.Editor editor = pref.edit();
-
-                        editor.putInt("grid_size_port", seekPort.getProgress() + 3);
-                        editor.putInt("grid_size_land", seekLand.getProgress() + 3).apply();
-
-                        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                            int val = seekPort.getProgress() + 3;
-                            layoutManager.setSpanCount(val);
-                            callback.onGridSpanChanged(type, val);
-
-                        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                            int val = seekLand.getProgress() + 3;
-                            layoutManager.setSpanCount(val);
-                            callback.onGridSpanChanged(type, val);
-                        }
-                    }
-                });
-
-                builder.show();
-                return true;
-            }
-        });
     }
 
 
@@ -402,30 +298,27 @@ public class FragmentMain extends Fragment {
 
         class ViewHolder extends RecyclerView.ViewHolder {
 
-            LinearLayout parent, overlayParent, titleParent;
-            RelativeLayout iconParent;
+            LinearLayout parent;
+            LinearLayout titleParent;
 
-            ImageView icon, left, right, menu;
+            ImageView icon;
+            ImageView menu;
             TextView title, subtitle, counter, counterIndicator;
 
             ViewHolder(View itemView) {
                 super(itemView);
 
-                parent = (LinearLayout) itemView.findViewById(R.id.parent);
-                iconParent = (RelativeLayout) itemView.findViewById(R.id.icon_parent);
-                overlayParent = (LinearLayout) itemView.findViewById(R.id.overlay_parent);
-                titleParent = (LinearLayout) itemView.findViewById(R.id.title_parent);
+                parent = itemView.findViewById(R.id.parent);
+                titleParent = itemView.findViewById(R.id.title_parent);
 
-                icon = (ImageView) itemView.findViewById(R.id.icon);
-                left = (ImageView) itemView.findViewById(R.id.permission_left);
-                right = (ImageView) itemView.findViewById(R.id.permission_right);
-                menu = (ImageView) itemView.findViewById(R.id.menu);
+                icon = itemView.findViewById(R.id.icon);
+                menu = itemView.findViewById(R.id.menu);
 
-                title = (TextView) itemView.findViewById(R.id.title);
-                subtitle = (TextView) itemView.findViewById(R.id.subtitle);
+                title = itemView.findViewById(R.id.title);
+                subtitle = itemView.findViewById(R.id.subtitle);
 
-                counter = (TextView) itemView.findViewById(R.id.counter);
-                counterIndicator = (TextView) itemView.findViewById(R.id.counter_indicator);
+                counter = itemView.findViewById(R.id.counter);
+                counterIndicator = itemView.findViewById(R.id.counter_indicator);
             }
         }
 
@@ -504,12 +397,7 @@ public class FragmentMain extends Fragment {
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            return new ViewHolder(
-                    LayoutInflater.from(context)
-                            .inflate(gridMode ? R.layout.grid_item : R.layout.list_item,
-                                    parent,
-                                    false));
+            return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item, parent, false));
         }
 
         @Override
@@ -541,11 +429,11 @@ public class FragmentMain extends Fragment {
             if (count != null) {
                 if (policy.equalsIgnoreCase(UidPolicy.ALLOW)) {
                     count = count.split("\\+")[0];
-                    if (!gridMode) holder.counterIndicator.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+                    holder.counterIndicator.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
 
                 } else {
                     count = count.split("\\+")[1];
-                    if (!gridMode) holder.counterIndicator.setTextColor(0xffc62828);
+                    holder.counterIndicator.setTextColor(0xffc62828);
                 }
 
                 if (count.length() == 1) count = "0" + count;
@@ -555,142 +443,17 @@ public class FragmentMain extends Fragment {
             if (item.getItem3() != null && Integer.parseInt(count) > 0) {
                 holder.subtitle.setVisibility(View.VISIBLE);
                 holder.counter.setVisibility(View.VISIBLE);
-                if (!gridMode) holder.counterIndicator.setVisibility(View.VISIBLE);
+                holder.counterIndicator.setVisibility(View.VISIBLE);
 
                 holder.subtitle.setText(item.getItem3());
 
             } else {
                 holder.subtitle.setVisibility(View.GONE);
                 holder.counter.setVisibility(View.GONE);
-                if (!gridMode) holder.counterIndicator.setVisibility(View.GONE);
+                holder.counterIndicator.setVisibility(View.GONE);
             }
 
-            if (gridMode) handleGridItem(holder, item);
-            else handleListItem(holder, item);
-        }
-
-
-        private void handleGridItem(final ViewHolder holder, final ListItem item) {
-
-            holder.overlayParent.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    return true;
-                }
-            });
-
-            setClickListener(holder.icon, holder.icon, item);
-
-            holder.icon.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage(item.getPolicy().packageName);
-                    if (intent != null) startActivity(intent);
-                    return false;
-                }
-            });
-
-            holder.counter.setTextColor(counterText);
-
-            GradientDrawable counterBackDrawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.counter_back);
-            counterBackDrawable.setColor(counterBack);
-
-            holder.counter.setBackground(counterBackDrawable);
-
-            holder.titleParent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (holder.overlayParent.getVisibility() == View.GONE)
-                        showOverlay(holder);
-
-                    else
-                        hideOverlay(holder);
-                }
-            });
-
-            if (policy.equalsIgnoreCase(UidPolicy.ALLOW)) {
-                holder.left.setImageResource(R.drawable.ic_deny);
-                holder.left.setColorFilter(0xfff44336);
-
-            } else {
-                holder.left.setImageResource(R.drawable.ic_allow);
-                holder.left.setColorFilter(0xff4caf50);
-            }
-
-            holder.left.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    hideOverlay(holder);
-
-                    if (Settings.isPinProtected(context))
-                        handlePin(0, holder, item);
-                    else
-                        showSnack(0, holder, item);
-                }
-            });
-
-            holder.right.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    hideOverlay(holder);
-
-                    if (Settings.isPinProtected(context))
-                        handlePin(1, holder, item);
-                    else
-                        showSnack(1, holder, item);
-                }
-            });
-        }
-
-
-        private void showOverlay(final ViewHolder holder) {
-            final Animation up = AnimationUtils.loadAnimation(context, R.anim.abc_slide_in_bottom);
-            final Animation down = AnimationUtils.loadAnimation(context, R.anim.abc_slide_out_bottom);
-
-            down.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    holder.iconParent.setVisibility(View.GONE);
-                    holder.overlayParent.startAnimation(up);
-                    holder.overlayParent.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
-
-            holder.iconParent.startAnimation(down);
-
-        }
-
-
-        private void hideOverlay(final ViewHolder holder) {
-            final Animation up = AnimationUtils.loadAnimation(context, R.anim.abc_slide_in_bottom);
-            final Animation down = AnimationUtils.loadAnimation(context, R.anim.abc_slide_out_bottom);
-
-            down.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    holder.overlayParent.setVisibility(View.GONE);
-                    holder.iconParent.startAnimation(up);
-                    holder.iconParent.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
-
-            holder.overlayParent.startAnimation(down);
+            handleListItem(holder, item);
         }
 
 
@@ -698,66 +461,52 @@ public class FragmentMain extends Fragment {
 
             setClickListener(holder.titleParent, holder.icon, item);
 
-            holder.icon.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    holder.icon.getHandler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage(item.getPolicy().packageName);
-                            if (intent != null) startActivity(intent);
-                        }
-                    }, 200);
+            holder.icon.setOnClickListener(view -> holder.icon.getHandler().postDelayed(() -> {
+                Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage(item.getPolicy().packageName);
+                if (intent != null) startActivity(intent);
+            }, 200));
+
+            holder.menu.setOnClickListener(view -> {
+                PopupMenu popupMenu = new PopupMenu(context, holder.menu);
+
+                Menu menu = popupMenu.getMenu();
+
+                if (policy.equalsIgnoreCase(UidPolicy.ALLOW)) {
+                    setMenu(0, menu.add(getString(R.string.deny)), holder, item);
+
+                } else {
+                    setMenu(0, menu.add(getString(R.string.allow)), holder, item);
                 }
-            });
 
-            holder.menu.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PopupMenu popupMenu = new PopupMenu(context, holder.menu);
+                setMenu(1, menu.add(getString(R.string.revoke)), holder, item);
 
-                    Menu menu = popupMenu.getMenu();
-
-                    if (policy.equalsIgnoreCase(UidPolicy.ALLOW)) {
-                        setMenu(0, menu.add(getString(R.string.deny)), holder, item);
-
-                    } else {
-                        setMenu(0, menu.add(getString(R.string.allow)), holder, item);
-                    }
-
-                    setMenu(1, menu.add(getString(R.string.revoke)), holder, item);
-
-                    popupMenu.show();
-                }
+                popupMenu.show();
             });
         }
 
 
         private void setMenu(final int which, MenuItem menuItem, final ViewHolder holder, final ListItem item) {
 
-            menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
+            menuItem.setOnMenuItemClickListener(menuItem1 -> {
 
-                    switch (which) {
-                        case 0:
-                            if (Settings.isPinProtected(context))
-                                handlePin(0, holder, item);
-                            else
-                                showSnack(0, holder, item);
-                            break;
+                switch (which) {
+                    case 0:
+                        if (Settings.isPinProtected(context))
+                            handlePin(0, holder, item);
+                        else
+                            showSnack(0, holder, item);
+                        break;
 
-                        case 1:
-                            if (Settings.isPinProtected(context))
-                                handlePin(1, holder, item);
-                            else
-                                showSnack(1, holder, item);
+                    case 1:
+                        if (Settings.isPinProtected(context))
+                            handlePin(1, holder, item);
+                        else
+                            showSnack(1, holder, item);
 
-                            break;
-                    }
-
-                    return false;
+                        break;
                 }
+
+                return false;
             });
         }
 
