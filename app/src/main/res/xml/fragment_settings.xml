@@ -27,7 +27,7 @@
             app:title="@string/pin_protection"
             app:summary="@string/pin_protection_summary"/>
 
-        <com.kabouzeid.appthemehelper.common.preference.ATESwitchPreference
+        <CheckBoxPreference
             app:key="confirmation"
             app:title="@string/pref_confirmation"
             app:summary="@string/pref_confirmation_summary" />
@@ -45,7 +45,7 @@
             app:key="notification"
             app:title="@string/notification"/>
 
-        <com.kabouzeid.appthemehelper.common.preference.ATESwitchPreference
+        <CheckBoxPreference
             app:key="deny_mode"
             app:title="@string/restrict_noti"
             app:summary="@string/restrict_noti_summary"/>
@@ -56,12 +56,12 @@
     <com.koushikdutta.superuser.view.PreferenceCategoryCustom
         app:title="@string/pref_interface">
 
-        <com.kabouzeid.appthemehelper.common.preference.ATESwitchPreference
+        <CheckBoxPreference
             app:key="ellipsize"
             app:title="@string/ellipsize"
             android:defaultValue="true"/>
 
-        <com.kabouzeid.appthemehelper.common.preference.ATESwitchPreference
+        <CheckBoxPreference
             app:key="hide_launcher"
             app:title="@string/hide_launcher"
             android:defaultValue="false"/>

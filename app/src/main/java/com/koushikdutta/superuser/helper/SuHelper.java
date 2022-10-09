@@ -23,7 +23,7 @@ import android.util.Log;
 
 public class SuHelper {
 
-    public static String CURRENT_VERSION = "17";
+    public static String CURRENT_VERSION = "16";
 
     public static void checkSu(Context context) throws Exception {
         Process p = Runtime.getRuntime().exec("su -v");
@@ -34,9 +34,6 @@ public class SuHelper {
 
         if (0 != p.waitFor())
             throw new Exception("non zero result");
-
-        if (result == null)
-            throw new Exception("no data");
 
         if (!result.contains(context.getPackageName()))
             throw new Exception("unknown su");

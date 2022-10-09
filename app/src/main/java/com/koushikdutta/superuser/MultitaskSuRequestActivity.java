@@ -31,6 +31,7 @@ import android.net.LocalSocketAddress;
 import android.net.LocalSocketAddress.Namespace;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -101,17 +102,14 @@ public class MultitaskSuRequestActivity extends AppCompatActivity {
 
     private int pid, timeLeft = 3;
 
-    public MultitaskSuRequestActivity(SharedPreferences pref) {
-        this.pref = pref;
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.PopupTheme);
 
         //Settings.applyDarkThemeSetting(this, R.style.RequestThemeDark);
         super.onCreate(savedInstanceState);
+
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -370,25 +368,13 @@ public class MultitaskSuRequestActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.uid_header)).setText(Integer.toString(desiredUid));
         ((TextView)findViewById(R.id.command_header)).setText(desiredCmd);
 
-        if(!"".equals(bindFrom) && !"".equals(bindTo)) {
-            findViewById(R.id.bind).setVisibility(View.VISIBLE);
-            ((TextView)findViewById(R.id.bind_to)).setText(bindTo);
 
-            findViewById(R.id.uid).setVisibility(View.GONE);
-            findViewById(R.id.command).setVisibility(View.GONE);
-            //findViewById(R.id.remember).setVisibility(View.GONE);
-
-            spinnerAdapter.add(getString(R.string.once));
-
-        } else {
-            spinnerAdapter.add(getString(R.string.once));
-            spinnerAdapter.add(getString(R.string.forever));
-            spinnerAdapter.add(getString(R.string.remember_minutes, "10"));
-            spinnerAdapter.add(getString(R.string.remember_minutes, "20"));
-            spinnerAdapter.add(getString(R.string.remember_minutes, "30"));
-            spinnerAdapter.add(getString(R.string.remember_minutes, "60"));
-        }
-
+        spinnerAdapter.add(getString(R.string.once));
+        spinnerAdapter.add(getString(R.string.forever));
+        spinnerAdapter.add(getString(R.string.remember_minutes, "10"));
+        spinnerAdapter.add(getString(R.string.remember_minutes, "20"));
+        spinnerAdapter.add(getString(R.string.remember_minutes, "30"));
+        spinnerAdapter.add(getString(R.string.remember_minutes, "60"));
 
         if (pkgs != null && pkgs.length > 0) {
             for (String pkg: pkgs) {

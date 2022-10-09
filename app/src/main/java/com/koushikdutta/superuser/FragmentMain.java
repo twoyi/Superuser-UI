@@ -313,6 +313,16 @@ public class FragmentMain extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
+        MenuItem about = menu.add(Menu.NONE, 0, Menu.NONE, R.string.about);
+        MenuItem settings = menu.add(Menu.NONE, 0, Menu.NONE, R.string.settings);
+        about.setOnMenuItemClickListener(item -> {
+            startActivity(new Intent(getActivity(), ActivityAbout.class));
+            return true;
+        });
+        settings.setOnMenuItemClickListener(item -> {
+            startActivity(new Intent(getActivity(), ActivitySettings.class));
+            return true;
+        });
         MenuItem mode = menu.add(Menu.NONE, Menu.NONE, 100, R.string.list_mode);
         mode.setTitle(pref.getBoolean("grid_mode", true) ? R.string.list_mode : R.string.grid_mode);
         mode.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);

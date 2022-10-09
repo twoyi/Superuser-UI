@@ -37,6 +37,10 @@ android {
     packagingOptions {
         exclude 'META-INF/beans.xml'
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
