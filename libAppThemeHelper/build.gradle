@@ -25,12 +25,12 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:preference-v7:25.1.0'
+    implementation 'com.android.support:appcompat-v7:25.1.0'
+    implementation 'com.android.support:design:25.1.0'
+    implementation 'com.android.support:preference-v7:25.1.0'
     //provided 'com.android.support:cardview-v7:24.2.1'
 
     // Used for the list preference classes
-    provided 'com.afollestad.material-dialogs:core:0.9.0.2'
-    provided 'com.afollestad.material-dialogs:commons:0.9.0.2'
+    compileOnly 'com.afollestad.material-dialogs:core:0.9.0.2'
+    compileOnly 'com.afollestad.material-dialogs:commons:0.9.0.2'
 }
