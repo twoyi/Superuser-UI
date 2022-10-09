@@ -50,5 +50,5 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:0.9.0.2'
     implementation 'com.afollestad.material-dialogs:commons:0.9.0.2'
 
-    implementation project(':libAppThemeHelper')
+//    implementation project(':libAppThemeHelper')
 }

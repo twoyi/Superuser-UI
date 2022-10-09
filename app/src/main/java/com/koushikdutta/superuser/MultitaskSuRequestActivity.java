@@ -34,9 +34,7 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,24 +49,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.koushikdutta.superuser.db.SuDatabaseHelper;
+import com.koushikdutta.superuser.db.UidPolicy;
+import com.koushikdutta.superuser.helper.Settings;
+import com.koushikdutta.superuser.helper.SuHelper;
+import com.koushikdutta.superuser.util.Util;
+import com.koushikdutta.superuser.view.PinView;
+
 import junit.framework.Assert;
 
 import java.io.DataInputStream;
 import java.io.File;
 import java.util.HashMap;
-
-import com.kabouzeid.appthemehelper.core.ThemeStore;
-import com.koushikdutta.superuser.db.SuDatabaseHelper;
-import com.koushikdutta.superuser.db.UidPolicy;
-import com.koushikdutta.superuser.util.Util;
-import com.koushikdutta.superuser.view.PinView;
-import com.koushikdutta.superuser.helper.Settings;
-import com.koushikdutta.superuser.helper.SuHelper;
-
-import static com.koushikdutta.superuser.MainActivity.PREF_BLACK_THEME;
-import static com.koushikdutta.superuser.MainActivity.PREF_DARK_THEME;
-import static com.koushikdutta.superuser.MainActivity.PREF_LIGHT_THEME;
-import static com.koushikdutta.superuser.MainActivity.PREF_THEME;
 
 @SuppressLint("ValidFragment")
 public class MultitaskSuRequestActivity extends AppCompatActivity {
@@ -109,23 +101,14 @@ public class MultitaskSuRequestActivity extends AppCompatActivity {
 
     private int pid, timeLeft = 3;
 
-
+    public MultitaskSuRequestActivity(SharedPreferences pref) {
+        this.pref = pref;
+    }
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        pref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        switch (pref.getString(PREF_THEME, PREF_LIGHT_THEME)) {
-            case PREF_BLACK_THEME:
-            case PREF_DARK_THEME:
-                setTheme(R.style.PopupTheme);
-                break;
-
-            case PREF_LIGHT_THEME:
-                setTheme(R.style.PopupTheme_Light);
-                break;
-        }
+        setTheme(R.style.PopupTheme);
 
         //Settings.applyDarkThemeSetting(this, R.style.RequestThemeDark);
         super.onCreate(savedInstanceState);
@@ -193,7 +176,7 @@ public class MultitaskSuRequestActivity extends AppCompatActivity {
 
         setContentView(root, new LinearLayout.LayoutParams(width(this, 375), height(this, 250, 250)));
 
-        ((TextView) root.findViewById(R.id.request)).setTextColor(ThemeStore.primaryColor(this));
+        ((TextView) root.findViewById(R.id.request)).setTextColor(getColor(R.color.colorPrimary));
 
         root.findViewById(R.id.spinner_arrow).setOnClickListener(new OnClickListener() {
             @Override

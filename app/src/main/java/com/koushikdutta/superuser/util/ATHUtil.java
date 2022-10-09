@@ -1,4 +1,4 @@
-package com.kabouzeid.appthemehelper.util;
+package com.koushikdutta.superuser.util;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -9,10 +9,6 @@ import android.support.annotation.NonNull;
  * @author Aidan Follestad (afollestad)
  */
 public final class ATHUtil {
-
-    public static boolean isWindowBackgroundDark(Context context) {
-        return !ColorUtil.isColorLight(ATHUtil.resolveColor(context, android.R.attr.windowBackground));
-    }
 
     public static int resolveColor(Context context, @AttrRes int attr) {
         return resolveColor(context, attr, 0);

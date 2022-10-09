@@ -7,7 +7,7 @@ import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.kabouzeid.appthemehelper.core.ThemeStore;
+import com.koushikdutta.superuser.R;
 
 
 public class PreferenceCategoryCustom extends PreferenceCategory {
@@ -37,6 +37,6 @@ public class PreferenceCategoryCustom extends PreferenceCategory {
         TextView textView = (TextView) holder.findViewById(android.R.id.title);
         textView.setAllCaps(true);
         textView.setTypeface(null, Typeface.BOLD);
-        textView.setTextColor(ThemeStore.accentColor(getContext()));
+        textView.setTextColor(getContext().getColor(R.color.colorAccent));
     }
 }

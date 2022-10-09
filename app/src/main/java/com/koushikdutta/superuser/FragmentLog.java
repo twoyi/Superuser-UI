@@ -29,7 +29,6 @@ import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -47,15 +46,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.kabouzeid.appthemehelper.core.ThemeStore;
-import com.kabouzeid.appthemehelper.util.TintHelper;
 import com.koushikdutta.superuser.db.LogEntry;
 import com.koushikdutta.superuser.db.SuDatabaseHelper;
 import com.koushikdutta.superuser.db.SuperuserDatabaseHelper;
 import com.koushikdutta.superuser.db.UidPolicy;
-import com.koushikdutta.superuser.util.Util;
-import com.koushikdutta.superuser.helper.Theme;
 import com.koushikdutta.superuser.helper.Settings;
+import com.koushikdutta.superuser.util.Util;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -159,10 +155,11 @@ public class FragmentLog extends Fragment  {
 
             icon.setImageDrawable(Util.loadPackageIcon(getActivity(), up.packageName));
 
-            title.setTextColor(((ActivityLog)getActivity()).textToolbar);
-            subtitle.setTextColor(((ActivityLog)getActivity()).textToolbar);
-            request.setTextColor(((ActivityLog)getActivity()).textToolbar);
-            command.setTextColor(((ActivityLog)getActivity()).textToolbar);
+            int color = 0xff424242;
+            title.setTextColor(color);
+            subtitle.setTextColor(color);
+            request.setTextColor(color);
+            command.setTextColor(color);
 
             title.setText(up.getName());
 
@@ -182,10 +179,10 @@ public class FragmentLog extends Fragment  {
         LinearLayout logParent = (LinearLayout) getActivity().findViewById(R.id.log);
         LinearLayout notiParent = (LinearLayout) getActivity().findViewById(R.id.noti);
 
-        int accent = ThemeStore.accentColor(getContext());
+//        int accent = ThemeStore.accentColor(getContext());
 
-        TintHelper.setTint(log, accent, false);
-        TintHelper.setTint(notification, accent, false);
+//        TintHelper.setTint(log, accent, false);
+//        TintHelper.setTint(notification, accent, false);
 
         if (up == null) {
             log.setChecked(Settings.getLogging(getActivity()));
@@ -318,14 +315,7 @@ public class FragmentLog extends Fragment  {
 
         VectorDrawableCompat icon = VectorDrawableCompat.create(getContext().getResources(), R.drawable.ic_delete, getContext().getTheme());
 
-        if (!Theme.getThemeCurrent(PreferenceManager.getDefaultSharedPreferences(getContext())).equals(MainActivity.PREF_BLACK_THEME)) {
-            icon.setColorFilter(
-                    getActivity() instanceof ActivityLog ? ((ActivityLog) getActivity()).textToolbar : ((MainActivity)getActivity()).textToolbarDefault,
-                    PorterDuff.Mode.SRC_ATOP);
-
-        } else {
-            icon.setColorFilter(0xffeaeaea, PorterDuff.Mode.SRC_ATOP);
-        }
+        icon.setColorFilter(0xffeaeaea, PorterDuff.Mode.SRC_ATOP);
 
 
         if (up == null) {

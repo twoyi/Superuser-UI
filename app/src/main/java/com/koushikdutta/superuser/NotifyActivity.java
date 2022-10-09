@@ -19,12 +19,10 @@
 package com.koushikdutta.superuser;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,10 +32,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import static com.koushikdutta.superuser.MainActivity.PREF_BLACK_THEME;
-import static com.koushikdutta.superuser.MainActivity.PREF_DARK_THEME;
-import static com.koushikdutta.superuser.MainActivity.PREF_LIGHT_THEME;
-import static com.koushikdutta.superuser.MainActivity.PREF_THEME;
 import static com.koushikdutta.superuser.MultitaskSuRequestActivity.height;
 import static com.koushikdutta.superuser.MultitaskSuRequestActivity.width;
 
@@ -46,18 +40,8 @@ public class NotifyActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        switch (pref.getString(PREF_THEME, PREF_DARK_THEME)) {
-            case PREF_BLACK_THEME:
-            case PREF_DARK_THEME:
-                setTheme(R.style.PopupTheme);
-                break;
-
-            case PREF_LIGHT_THEME:
-                setTheme(R.style.PopupTheme_Light);
-                break;
-        }
+        setTheme(R.style.PopupTheme);
 
         //Settings.applyDarkThemeSetting(this, R.style.RequestThemeDark);
         super.onCreate(savedInstanceState);

@@ -63,14 +63,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kabouzeid.appthemehelper.util.ATHUtil;
 import com.koushikdutta.superuser.db.SuDatabaseHelper;
 import com.koushikdutta.superuser.db.UidPolicy;
 import com.koushikdutta.superuser.helper.Settings;
-import com.koushikdutta.superuser.helper.Theme;
 import com.koushikdutta.superuser.helper.recycler.GridDividerItemDecoration;
 import com.koushikdutta.superuser.helper.recycler.GridTopOffsetItemDecoration;
 import com.koushikdutta.superuser.helper.recycler.StartOffsetItemDecoration;
+import com.koushikdutta.superuser.util.ATHUtil;
 import com.koushikdutta.superuser.util.Util;
 import com.koushikdutta.superuser.view.PinView;
 import com.koushikdutta.superuser.view.RecyclerViewSwipeable;
@@ -436,13 +435,8 @@ public class FragmentMain extends Fragment {
 
             int defBack = 0xff555555;
 
-            switch (((MainActivity)getActivity()).theme) {
-                case MainActivity.PREF_LIGHT_THEME:
-                    defBack = 0xff656565;
-            }
-
-            counterBack = Theme.getCounterBackColor(pref, defBack);
-            counterText = Theme.getCounterTextColor(pref);
+            counterBack = defBack;
+            counterText = 0xfffafafa;
         }
 
 

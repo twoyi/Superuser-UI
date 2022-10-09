@@ -27,6 +27,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
@@ -34,7 +35,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.kabouzeid.appthemehelper.common.preference.ATESwitchPreference;
 import com.koushikdutta.superuser.view.PinView;
 import com.koushikdutta.superuser.helper.Settings;
 
@@ -64,7 +64,7 @@ public class FragmentSettings extends PreferenceFragmentCompat {
         initPrefEllipsize();
         initPrefPin();
 
-        ATESwitchPreference launcher = (ATESwitchPreference) findPreference("hide_launcher");
+        CheckBoxPreference launcher = (CheckBoxPreference) findPreference("hide_launcher");
         launcher.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -377,7 +377,7 @@ public class FragmentSettings extends PreferenceFragmentCompat {
 
 
     private void initPrefEllipsize() {
-        ATESwitchPreference switchPreference = (ATESwitchPreference) findPreference("ellipsize");
+        CheckBoxPreference switchPreference = (CheckBoxPreference) findPreference("ellipsize");
 
         switchPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
